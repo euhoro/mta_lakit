@@ -1,6 +1,5 @@
 import unittest
 from atm_service import ATMService
-from threading import Thread
 
 
 class TestATMService(unittest.TestCase):
