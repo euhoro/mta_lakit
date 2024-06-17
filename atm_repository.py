@@ -9,3 +9,7 @@ class InventoryService(ABC):
     @abstractmethod
     def write_inventory(self, inventory):
         pass
+
+    @abstractmethod
+    def restart(self):
+        pass

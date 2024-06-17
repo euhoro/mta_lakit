@@ -11,3 +11,6 @@ class InMemoryInventoryService(InventoryService):
 
     def write_inventory(self, inventory):
         self.inventory = inventory
+
+    def restart(self):
+        self.inventory = BILLS_AND_COINS

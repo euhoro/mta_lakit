@@ -8,6 +8,9 @@ from atm_repository_common import BILLS_AND_COINS
 class SQLiteInventoryService(InventoryService):
     def __init__(self, db_path='inventory.db'):
         self.db_path = db_path
+        self.restart()
+
+    def restart(self):
         self._initialize_db()
 
     def _initialize_db(self):

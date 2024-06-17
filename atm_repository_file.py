@@ -11,8 +11,11 @@ INVENTORY_FILE = 'inventory.json'
 class FileInventoryService(InventoryService):
     def __init__(self):
         if not os.path.exists(INVENTORY_FILE):
-            initial_inventory = BILLS_AND_COINS
-            self.write_inventory(initial_inventory)
+            self.re_init()
+
+    def re_init(self):
+        initial_inventory = BILLS_AND_COINS
+        self.write_inventory(initial_inventory)
 
     def read_inventory(self):
         with open(INVENTORY_FILE, 'r') as file:
@@ -31,3 +34,6 @@ class FileInventoryService(InventoryService):
             fcntl.flock(file, fcntl.LOCK_EX)
             json.dump(inventory, file)
             fcntl.flock(file, fcntl.LOCK_UN)
+
+    def restart(self):
+        self.re_init()

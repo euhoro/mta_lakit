@@ -33,7 +33,7 @@ class ATMService:
             for denomination in denominations:
                 if amount == 0:
                     break
-                num_notes = min(int(amount // denomination), self.inventory[denomination_type][denomination])
+                num_notes = min(int(amount *100 // denomination * 100), self.inventory[denomination_type][denomination])
                 if num_notes > 0:
                     if denomination_type == "COIN":
                         total_coins += num_notes
@@ -106,3 +106,7 @@ class ATMService:
             total = sum(k * v for k, v in self.inventory["BILL"].items()) + sum(
                 k * v for k, v in self.inventory["COIN"].items())
         return {"total": total}
+
+    def restart(self):
+        with self.inventory_lock:
+            self.inventory_service.restart()
