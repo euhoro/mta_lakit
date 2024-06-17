@@ -4,6 +4,8 @@ from atm_repository_file import FileInventoryService
 from atm_repository_mem import InMemoryInventoryService
 from atm_repository_sqllite import SQLiteInventoryService
 
+DEVISION_MULTIPLIER = 100
+
 MULTIPLIER_FOR_DIVISION = 100
 
 ERR_20_MAX_AMOUNT = "Amount exceeds the maximum withdrawal limit of 2000"
@@ -33,14 +35,14 @@ class ATMService:
             for denomination in denominations:
                 if amount == 0:
                     break
-                num_notes = min(int((amount *100) // (denomination *100)), self.inventory[denomination_type][denomination])
+                num_notes = min(int((amount * DEVISION_MULTIPLIER) // (denomination *DEVISION_MULTIPLIER)), self.inventory[denomination_type][denomination])
                 if num_notes > 0:
                     if denomination_type == "COIN":
                         total_coins += num_notes
-                    if total_coins > 50:
+                    if total_coins > 50 and int(amount * DEVISION_MULTIPLIER) == 0:
                         return None, ERR_TOO_MANY_COINS, 422
                     proposed_withdrawal[denomination_type][denomination] = num_notes
-                    amount -= denomination * num_notes
+                    amount = self.make_round(amount - self.make_round(denomination * num_notes))
 
         if amount > 0:
             available_amount = {
@@ -50,6 +52,9 @@ class ATMService:
             return None, f"{ERR_INSUFFICIENT_FUNDS} {available_amount}", 409
 
         return proposed_withdrawal, None, 200
+
+    def make_round(self, num):
+        return round(num, int(len(str(MULTIPLIER_FOR_DIVISION)) - 1))
 
     def withdraw_money(self, amount):
         if amount <= 0:
@@ -79,7 +84,7 @@ class ATMService:
                 if denom_value not in [200, 100, 20, 10, 1, 5, 0.1, 0.01]:
                     return f"Unknown denomination {denomination}", 422
 
-                denom_type = "BILL" if denom_value >= 1 else "COIN"
+                denom_type = "BILL" if denom_value >= 20 else "COIN"
 
                 if denom_value not in self.inventory[denom_type]:
                     self.inventory[denom_type][denom_value] = 0
