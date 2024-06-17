@@ -2,10 +2,14 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Dict
 import uvicorn
+
+from atm_repository_mem import InMemoryInventoryService
+from atm_repository_file import FileInventoryService
 from atm_service import ATMService
 
 app = FastAPI()
 
+#atm_service = ATMService(InMemoryInventoryService())
 atm_service = ATMService()
 
 

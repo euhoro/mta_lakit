@@ -1,4 +1,6 @@
 import unittest
+
+from atm_repository_file import FileInventoryService
 from atm_service import ATMService
 
 

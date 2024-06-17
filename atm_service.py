@@ -1,9 +1,8 @@
-import fcntl
-import json
-import os
 from threading import Lock
 
-INVENTORY_FILE = 'inventory.json'
+from atm_repository_file import FileInventoryService
+from atm_repository_mem import InMemoryInventoryService
+
 MULTIPLIER_FOR_DIVISION = 100
 
 ERR_20_MAX_AMOUNT = "Amount exceeds the maximum withdrawal limit of 2000"
@@ -13,36 +12,12 @@ ERR_INSUFFICIENT_FUNDS = "Insufficient funds. Max available amount:"
 
 
 class ATMService:
-    def __init__(self):
+
+    def __init__(self, inventory_service=None):
         self.inventory_lock = Lock()
-        if not os.path.exists(INVENTORY_FILE):
-            self.inventory = {
-                "BILL": {200: 7, 100: 4, 20: 15},
-                "COIN": {10: 10, 1: 10, 5: 1, 0.1: 12, 0.01: 21}
-            }
-            self._write_inventory_to_file()
-        else:
-            self.inventory = self._read_inventory_from_file()
-
-    def _read_inventory_from_file(self):
-        with open(INVENTORY_FILE, 'r') as file:
-            fcntl.flock(file, fcntl.LOCK_SH)
-            inventory = json.load(file)
-            fcntl.flock(file, fcntl.LOCK_UN)
-
-        self.inventory = self.reformat_inventory(inventory)
-        return self.inventory
-
-    def reformat_inventory(self, inventory):
-        inventory["BILL"] = {int(k): v for k, v in inventory["BILL"].items()}
-        inventory["COIN"] = {float(k): v for k, v in inventory["COIN"].items()}
-        return inventory
-
-    def _write_inventory_to_file(self):
-        with open(INVENTORY_FILE, 'w') as file:
-            fcntl.flock(file, fcntl.LOCK_EX)
-            json.dump(self.reformat_inventory(self.inventory), file)
-            fcntl.flock(file, fcntl.LOCK_UN)
+        #self.inventory_service = inventory_service or InMemoryInventoryService()
+        self.inventory_service = inventory_service or FileInventoryService()
+        self.inventory = self.inventory_service.read_inventory()
 
     def _propose_withdrawal(self, amount):
         proposed_withdrawal = {
@@ -81,7 +56,7 @@ class ATMService:
             return ERR_20_MAX_AMOUNT, 422
 
         with self.inventory_lock:
-            self.inventory = self._read_inventory_from_file()
+            self.inventory = self.inventory_service.read_inventory()
             proposed_withdrawal, error, status_code = self._propose_withdrawal(amount)
             if error:
                 return error, status_code
@@ -91,12 +66,12 @@ class ATMService:
                 for denomination, num_notes in proposed_withdrawal[denomination_type].items():
                     self.inventory[denomination_type][denomination] -= num_notes
 
-            self._write_inventory_to_file()
+            self.inventory_service.write_inventory(self.inventory)
             return {"requested_amount": amount, "withdrawal": proposed_withdrawal}, 200
 
     def refill_money(self, money):
         with self.inventory_lock:
-            self.inventory = self._read_inventory_from_file()
+            self.inventory = self.inventory_service.read_inventory()
             for denomination, amount in money.items():
                 denom_value = float(denomination)
                 if denom_value not in [200, 100, 20, 10, 1, 5, 0.1, 0.01]:
@@ -109,12 +84,12 @@ class ATMService:
 
                 self.inventory[denom_type][denom_value] += amount
 
-            self._write_inventory_to_file()
+            self.inventory_service.write_inventory(self.inventory)
             return {"refilled": money}, 200
 
     def get_inventory(self):
         with self.inventory_lock:
-            self.inventory = self._read_inventory_from_file()
+            self.inventory = self.inventory_service.read_inventory()
             response = {
                 "result": {
                     "bills": {str(k): v for k, v in self.inventory["BILL"].items() if v > 0},
@@ -125,7 +100,7 @@ class ATMService:
 
     def get_total(self):
         with self.inventory_lock:
-            self.inventory = self._read_inventory_from_file()
+            self.inventory = self.inventory_service.read_inventory()
             total = sum(k * v for k, v in self.inventory["BILL"].items()) + sum(
                 k * v for k, v in self.inventory["COIN"].items())
         return {"total": total}
