@@ -1,31 +1,39 @@
 from fastapi import FastAPI, HTTPException
-
-from atm_service import ATMService
-from models import WithdrawalRequest, RefillRequest, InventoryResponse
-
+from pydantic import BaseModel
+from typing import Dict
 import uvicorn
-
-C_COIN = "COIN"
-
-C_BILL = "BILL"
+from atm_service import ATMService
 
 app = FastAPI()
 
 atm_service = ATMService()
 
 
+class WithdrawalRequest(BaseModel):
+    amount: float
+
+
+class RefillRequest(BaseModel):
+    money: Dict[str, int]
+
+
+class InventoryResponse(BaseModel):
+    result: Dict[str, Dict[str, int]]
+
+
 @app.post("/atm/withdrawal")
 def withdraw_money(request: WithdrawalRequest):
-    try:
-        result = atm_service.withdraw_money(request.amount)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
+    result, status_code = atm_service.withdraw_money(request.amount)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
 
 
 @app.post("/atm/refill")
 def refill_money(request: RefillRequest):
-    result = atm_service.refill_money(request.money)
+    result, status_code = atm_service.refill_money(request.money)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
     return result
 
 
@@ -41,6 +49,5 @@ def get_total():
     return result
 
 
-# todo : remove this when deploy to prod
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

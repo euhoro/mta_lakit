@@ -1,4 +1,5 @@
 import unittest
+from threading import Thread
 
 import pytest
 from fastapi.testclient import TestClient
@@ -50,7 +51,7 @@ def test_refill():
 def test_withdraw_zero_amount():
     response = client.post("/atm/withdrawal", json={"amount": 3000})
     assert response.status_code == 422
-    assert response.json()["detail"] == "Amount must be max 2000"
+    assert response.json()["detail"] == "Amount exceeds the maximum withdrawal limit of 2000"
 
 
 def test_withdraw_negative_amount():
@@ -58,7 +59,36 @@ def test_withdraw_negative_amount():
     assert response.status_code == 422
     assert response.json()["detail"] == "Amount must be greater than zero"
 
-#todo:
+
+# def test_concurrent_withdrawals():
+#     def withdraw():
+#         response = client.post("/atm/withdrawal", json={"amount": 0.01})
+#         assert response.status_code in [200, 409, 422]
+#
+#     threads = []
+#     for _ in range(100):
+#         thread = Thread(target=withdraw)
+#         threads.append(thread)
+#         thread.start()
+#
+#     for thread in threads:
+#         thread.join()
+#
+#     # Check the total amount to ensure consistency
+#     total_response = client.get("/atm/total")
+#     assert total_response.status_code == 200
+#     remaining_total = total_response.json()["total"]
+#     expected_total = 2371.79  # Initial total minus the total withdrawn (1.0)
+#     assert remaining_total == expected_total
+
+
+# def test_withdraw_too_many_coins():
+#     response = client.post("/atm/withdrawal", json={"amount": 0.5})
+#     assert response.status_code == 422
+#     assert response.json()["detail"] == "Too many coins"
+
+
+# todo:
 # V. If there is not enough money (bills or coins) in the ATM return http status 409 (conflict) with the max
 # current amount available for the withdrawal for each denomination.
 #
