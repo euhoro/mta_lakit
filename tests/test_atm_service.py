@@ -9,12 +9,28 @@ class TestATMService(unittest.TestCase):
         self.atm_service = ATMService()
 
     def test_atm_logic(self):
-        atm_service = ATMService()
-        total_before = atm_service.get_total()['total']
-        amount = 100
-        atm_service.withdraw_money(amount)
+        amount, atm_service, total_before1 = self.assert_amount(100,100,1)
         total_after = atm_service.get_total()['total']
-        self.assertAlmostEqual(total_before, total_after + amount, places=2)
+        self.assertEqual(total_before1, total_after + amount)
+
+        atm_service.restart()
+        total_before2 = atm_service.get_total()['total']
+        self.assertEqual(total_before1, total_before2)
+
+        #test2
+        amount, atm_service, total_before1 = self.assert_amount(200, 200, 1)
+
+        amount, atm_service, total_before1 = self.assert_amount(0.9, 0.1, 9, expected_type="COIN")
+        pass
+
+    def assert_amount(self,amount, expected_bill, expected_count, expected_type='BILL'):
+        atm_service = ATMService()
+        atm_service.restart()
+        total_before1 = atm_service.get_total()['total']
+        #amount = 100
+        result = atm_service.withdraw_money(amount)
+        assert result[0]['withdrawal'][expected_type][expected_bill] == expected_count
+        return amount, atm_service, total_before1
 
     def test_atm_logic_max(self):
         atm_service = ATMService()

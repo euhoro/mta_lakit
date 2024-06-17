@@ -11,14 +11,17 @@ class SQLiteInventoryService(InventoryService):
         self.restart()
 
     def restart(self):
-        self._initialize_db()
+        self.re_fill_db()
 
     def _initialize_db(self):
-        if not os.path.exists(self.db_path):
-            with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.cursor()
-                cursor.execute('DROP TABLE IF EXISTS inventory')
-                cursor.execute('''
+        #if not os.path.exists(self.db_path):
+        self.re_fill_db()
+
+    def re_fill_db(self):
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('DROP TABLE IF EXISTS inventory')
+            cursor.execute('''
                     CREATE TABLE IF NOT EXISTS inventory (
                         type TEXT NOT NULL,
                         denomination REAL NOT NULL,
@@ -26,17 +29,17 @@ class SQLiteInventoryService(InventoryService):
                         PRIMARY KEY (type, denomination)
                     )
                 ''')
-                # Initial inventory setup
-                cursor.execute('SELECT COUNT(*) FROM inventory')
-                if cursor.fetchone()[0] == 0:
-                    initial_inventory = BILLS_AND_COINS
-                    for type, denominations in initial_inventory.items():
-                        for denomination, amount in denominations.items():
-                            cursor.execute('''
+            # Initial inventory setup
+            cursor.execute('SELECT COUNT(*) FROM inventory')
+            if cursor.fetchone()[0] == 0:
+                initial_inventory = BILLS_AND_COINS
+                for type, denominations in initial_inventory.items():
+                    for denomination, amount in denominations.items():
+                        cursor.execute('''
                                 INSERT INTO inventory (type, denomination, amount)
                                 VALUES (?, ?, ?)
                             ''', (type, denomination, amount))
-                conn.commit()
+            conn.commit()
 
     def read_inventory(self):
         inventory = {"BILL": {}, "COIN": {}}
