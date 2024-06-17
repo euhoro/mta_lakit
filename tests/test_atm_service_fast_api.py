@@ -46,6 +46,12 @@ class TestATMService(unittest.TestCase):
         assert response.status_code == 422
         assert response.json()["detail"] == "Amount exceeds the maximum withdrawal limit of 2000"
 
+    def test_bad(self):
+        self.client = TestClient(app)
+        response = self.client.post("/atm/withdrawal", json={})
+        assert response.status_code == 422
+        assert response.json()["detail"] == "Amount exceeds the maximum withdrawal limit of 2000"
+
 
 
 if __name__ == "__main__":
