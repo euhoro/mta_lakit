@@ -41,5 +41,6 @@ class TestATM(unittest.TestCase):
         # checks initial total equals the final total plus the money tooken
         self.assertAlmostEqual(initial_total, final_total + total_withdrawn, places=2)
 
+
 if __name__ == "__main__":
     unittest.main()

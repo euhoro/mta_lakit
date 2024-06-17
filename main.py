@@ -20,7 +20,7 @@ def withdraw_money(request: WithdrawalRequest):
         result = atm_service.withdraw_money(request.amount)
         return result
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=422, detail=str(e))
 
 
 @app.post("/atm/refill")

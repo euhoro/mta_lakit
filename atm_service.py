@@ -10,6 +10,8 @@ class ATMService:
         self.inventory_lock = Lock()
 
     def withdraw_money(self, amount):
+        if amount > 2000:
+            raise ValueError("Amount must be max 2000")
         if amount <= 0:
             raise ValueError("Amount must be greater than zero")
 
