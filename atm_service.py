@@ -1,7 +1,7 @@
 from threading import Lock
 
-from atm_repository_file import FileInventoryService
-from atm_repository_mem import InMemoryInventoryService
+#from atm_repository_file import FileInventoryService
+#from atm_repository_mem import InMemoryInventoryService
 from atm_repository_sqllite import SQLiteInventoryService
 
 DEVISION_MULTIPLIER = 100
