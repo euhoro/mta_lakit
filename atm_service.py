@@ -2,6 +2,7 @@ from threading import Lock
 
 from atm_repository_file import FileInventoryService
 from atm_repository_mem import InMemoryInventoryService
+from atm_repository_sqllite import SQLiteInventoryService
 
 MULTIPLIER_FOR_DIVISION = 100
 
@@ -16,7 +17,8 @@ class ATMService:
     def __init__(self, inventory_service=None):
         self.inventory_lock = Lock()
         #self.inventory_service = inventory_service or InMemoryInventoryService()
-        self.inventory_service = inventory_service or FileInventoryService()
+        #self.inventory_service = inventory_service or FileInventoryService()
+        self.inventory_service = inventory_service or SQLiteInventoryService()
         self.inventory = self.inventory_service.read_inventory()
 
     def _propose_withdrawal(self, amount):
