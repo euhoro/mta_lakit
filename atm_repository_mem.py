@@ -1,12 +1,10 @@
 from atm_repository import InventoryService
+from atm_repository_common import BILLS_AND_COINS
 
 
 class InMemoryInventoryService(InventoryService):
     def __init__(self):
-        self.inventory = {
-            "BILL": {200: 7, 100: 4, 20: 15},
-            "COIN": {10: 10, 1: 10, 5: 1, 0.1: 12, 0.01: 21}
-        }
+        self.inventory = BILLS_AND_COINS
 
     def read_inventory(self):
         return self.inventory

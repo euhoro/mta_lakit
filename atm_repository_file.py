@@ -3,6 +3,7 @@ import json
 import os
 
 from atm_repository import InventoryService
+from atm_repository_common import BILLS_AND_COINS
 
 INVENTORY_FILE = 'inventory.json'
 
@@ -10,10 +11,7 @@ INVENTORY_FILE = 'inventory.json'
 class FileInventoryService(InventoryService):
     def __init__(self):
         if not os.path.exists(INVENTORY_FILE):
-            initial_inventory = {
-                "BILL": {200: 7, 100: 4, 20: 15},
-                "COIN": {10: 10, 1: 10, 5: 1, 0.1: 12, 0.01: 21}
-            }
+            initial_inventory = BILLS_AND_COINS
             self.write_inventory(initial_inventory)
 
     def read_inventory(self):
