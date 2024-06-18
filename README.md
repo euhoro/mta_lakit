@@ -2,7 +2,21 @@
 
 ## Quick Setup
 
-### On Mac
+### On Mac with python3.10
+
+1. Make the setup script executable and run it 
+( python3.10 should be installed and in %PATH% ):
+    ```bash
+   
+    chmod +x setup_and_run.sh
+    ./setup_and_run.sh
+    ```
+
+2. Access the application:
+   - [API Documentation](http://127.0.0.1:8000/docs)
+   - [Home](http://127.0.0.1:8000)
+
+### On machine with docker
 
 1. Make the setup script executable and run it 
 ( python3.10 should be installed and in %PATH% ):
@@ -14,8 +28,7 @@
 2. Access the application:
    - [API Documentation](http://127.0.0.1:8000/docs)
    - [Home](http://127.0.0.1:8000)
-
-
+   
 ## Detailed Setup
 
 1. Create a virtual environment:
