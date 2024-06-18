@@ -19,14 +19,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements_dev.txt
+    - name: Start Redis container
+      run: |
+        docker run --name redis -d -p 6379:6379 redis
     - name: Start Uvicorn server
       run: |
-        nohup SETTINGS_MODE=text uvicorn main:app --host 127.0.0.1 --port 8000 &
-        sleep 3  # Wait for the server to start
+        nohup SETTINGS_MODE=redis uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+        sleep 5  # Wait for the server to start
     - name: Run tests with pytest
       run: |
-        SETTINGS_MODE=text pytest tests
+        SETTINGS_MODE=redis pytest tests
     - name: Stop Uvicorn server
       if: always()
       run: |
         pkill -f "uvicorn main:app"
+    - name: Stop Redis container
+      if: always()
+      run: |
+        docker stop redis
+        docker rm redis
