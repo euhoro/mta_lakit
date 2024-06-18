@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint pytest requests fastapi uvicorn httpx
+        pip install -r requirements.txt
     - name: Start Uvicorn server
       run: |
         nohup SETTINGS_MODE=text uvicorn main:app --host 127.0.0.1 --port 8000 &
