@@ -1,7 +1,6 @@
-
 # Stress Testing function
 import threading
-from random import random
+import random
 
 import redis
 
@@ -10,7 +9,11 @@ from atm_service_redis import RedisInventoryService
 from common import COIN, BILL
 
 import pytest
-@pytest.mark.long
+import unittest
+#import requests
+from threading import Thread
+
+
 def stress_check(timeout=10):
     redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
     inventory_service = RedisInventoryService(redis_client)
@@ -75,5 +78,10 @@ def stress_check(timeout=10):
     assert final_total == expected_total, "The final total does not match the expected total from transactions"
 
 
-def test_stress():
-    stress_check()
+class TestATM(unittest.TestCase):
+    def setUp(self):
+        self.base_url = "http://127.0.0.1:8000/atm"
+
+    # @pytest.mark.long
+    def test_stress_long(self):
+        stress_check()
