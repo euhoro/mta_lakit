@@ -20,5 +20,8 @@ source venv/bin/activate
 echo "Installing dependencies..."
 pip install -r requirements.txt
 
+echo "Running redis locally..."
+docker run --name redis -d -p 6379:6379 redis
+
 echo "Starting FastAPI application..."
 uvicorn main:app --reload

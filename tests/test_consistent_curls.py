@@ -8,7 +8,7 @@ def run_curl_command(command):
     return result
 
 
-def test_withdraw_zero_amount():
+def test_withdraw_zero_amount_curl():
     command = """curl -L -g -X POST 'http://127.0.0.1:8000/atm/withdrawal' -H 'Content-Type: application/json' --data-raw '{"amount": 0}'"""
     result = run_curl_command(command)
     assert result.returncode == 0, f"Curl command failed with return code {result.returncode}"
@@ -18,7 +18,7 @@ def test_withdraw_zero_amount():
     #assert "422" in result.stderr
 
 
-def test_withdraw_negative_amount():
+def test_withdraw_negative_amount_curl():
     #command = """curl -L -g -X POST 'http://127.0.0.1:8000/atm/withdrawal' -H 'Content-Type: application/json' --data-raw '{"amount": -10}'"""
     command = """curl -L -g -X POST 'http://127.0.0.1:8000/atm/withdrawal' -H 'Content-Type: application/json' --data-raw '{"amount": 0}' -w '\\n%{http_code}'"""
     result = run_curl_command(command)

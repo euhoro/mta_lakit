@@ -1,7 +1,12 @@
 import unittest
-
-from atm_repository_file import FileInventoryService
 from atm_service import ATMService
+#from atm_service_json_file import JSONFileInventoryService
+#import pytest
+
+
+# @pytest.fixture
+# def json_file_inventory():
+#     return ATMService(JSONFileInventoryService())
 
 
 class TestATMService(unittest.TestCase):

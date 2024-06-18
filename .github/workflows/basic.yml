@@ -20,11 +20,11 @@ jobs:
         pip install pylint pytest requests fastapi uvicorn httpx
     - name: Start Uvicorn server
       run: |
-        nohup uvicorn main:app --host 127.0.0.1 --port 8000 &
+        nohup SETTINGS_MODE=text uvicorn main:app --host 127.0.0.1 --port 8000 &
         sleep 3  # Wait for the server to start
     - name: Run tests with pytest
       run: |
-        pytest tests
+        SETTINGS_MODE=text pytest tests
     - name: Stop Uvicorn server
       if: always()
       run: |

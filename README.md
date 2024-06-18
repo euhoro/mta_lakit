@@ -29,7 +29,18 @@
     ```bash
    pip install -r requirements.txt   
    
+4. Running redis locally`:
+    ```bash
+   docker run --name redis -d -p 6379:6379 redis 
+   
 3. Run App`:
     ```bash
    uvicorn main:app --reload
    
+# alternative:
+
+# Run with Redis
+SETTINGS_MODE=redis docker-compose up --build
+
+# Run with JSON file (for testing only - no real lock )
+SETTINGS_MODE=text docker-compose up --build
