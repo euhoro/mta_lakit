@@ -2,18 +2,24 @@
 version: "3.8"
 
 services:
+  redis:
+    image: "redis:latest"
+    container_name: redis_from_compose
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
     container_name: fastapi_app
     ports:
-      - "8000:80"
+      - "8000:8000"
     environment:
       - SETTINGS_MODE=${SETTINGS_MODE}
+      - REDIS_HOST=redis_from_compose
     depends_on:
       - redis
-
-  redis:
-    image: "redis:latest"
-    container_name: redis
-    ports:
-      - "6379:6379"

@@ -28,6 +28,7 @@ ERR_TOO_MANY_COINS = "Too many coins"
 ERR_INSUFFICIENT_FUNDS = "Insufficient funds. Max available amount:"
 
 SETTINGS_MODE = os.getenv("SETTINGS_MODE", "redis")
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")  # Default to 127.0.0.1 for local development
 
 
 def get_db_service():
@@ -35,7 +36,7 @@ def get_db_service():
     if SETTINGS_MODE == "redis":
         import redis
         inventory_service = RedisInventoryService(
-            redis.StrictRedis(host='localhost', port=6379, db=0))
+            redis.StrictRedis(host=REDIS_HOST, port=6379, db=0))
     else:
         from atm_service_json_file import JSONFileInventoryService
         inventory_service = JSONFileInventoryService()
