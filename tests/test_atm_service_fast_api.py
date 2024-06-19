@@ -41,13 +41,16 @@ class TestATMService(unittest.TestCase):
         self.client = TestClient(app)
         response = self.client.post("/atm/withdrawal", json={"amount": 3000})
         assert response.status_code == 422
-        assert response.json()["detail"] == "Amount exceeds the maximum withdrawal limit of 2000"
+        assert (
+            response.json()["detail"]
+            == "Amount exceeds the maximum withdrawal limit of 2000"
+        )
 
     def test_bad(self):
         self.client = TestClient(app)
         response = self.client.post("/atm/withdrawal", json={})
         assert response.status_code == 422
-        #assert response.json()["detail"] == "Amount exceeds the maximum withdrawal limit of 2000"
+        # assert response.json()["detail"] == "Amount exceeds the maximum withdrawal limit of 2000"
 
     def test_refill_full(self):
         self.client = TestClient(app)

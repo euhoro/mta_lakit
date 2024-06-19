@@ -36,10 +36,13 @@ def get_db_service():
 
     if SETTINGS_MODE == "redis":
         import redis
+
         inventory_service = RedisInventoryService(
-            redis.StrictRedis(host=REDIS_HOST, port=6379, db=0))
+            redis.StrictRedis(host=REDIS_HOST, port=6379, db=0)
+        )
     else:
         from atm_repository_json_file import JSONFileInventoryService
+
         inventory_service = JSONFileInventoryService()
 
     return inventory_service
@@ -66,17 +69,24 @@ class ATMService:
             try:
                 self.inventory_service.acquire_lock()
                 inventory_db = self.inventory_service.read_inventory()
-                proposed_withdrawal, error, status_code, inventory = self._propose_withdrawal(inventory_db, amount)
+                proposed_withdrawal, error, status_code, inventory = (
+                    self._propose_withdrawal(inventory_db, amount)
+                )
                 if error:
                     return error, status_code
 
                 # update the actual inventory if all checks passed
                 for denomination_type in [BILL, COIN]:
-                    for denomination, num_notes in proposed_withdrawal[denomination_type].items():
+                    for denomination, num_notes in proposed_withdrawal[
+                        denomination_type
+                    ].items():
                         inventory[denomination_type][denomination] -= num_notes
                 inventory_db = self.inventory_to_db(inventory, inventory_db)
                 self.inventory_service.write_inventory(inventory_db)
-                return {"requested_amount": amount, "withdrawal": proposed_withdrawal}, TOTAL_SUCCESS_200
+                return {
+                    "requested_amount": amount,
+                    "withdrawal": proposed_withdrawal,
+                }, TOTAL_SUCCESS_200
             except Exception as ex:
                 return "total failure", TOTAL_FAILURE_421
             finally:
@@ -91,7 +101,10 @@ class ATMService:
                 for denomination, amount in money.items():
                     denom_value = float(denomination)
                     if denom_value not in [200, 100, 20, 10, 1, 5, 0.1, 0.01]:
-                        return f"Unknown denomination {denomination}", VALIDATION_ERROR_422
+                        return (
+                            f"Unknown denomination {denomination}",
+                            VALIDATION_ERROR_422,
+                        )
 
                     denom_type = BILL if denom_value >= 20 else COIN
 
@@ -116,8 +129,12 @@ class ATMService:
                 inventory = self.inventory_from_bd(inventory_db)
                 response = {
                     "result": {
-                        "bills": {str(k): v for k, v in inventory[BILL].items() if v > 0},
-                        "coins": {str(k): v for k, v in inventory[COIN].items() if v > 0}
+                        "bills": {
+                            str(k): v for k, v in inventory[BILL].items() if v > 0
+                        },
+                        "coins": {
+                            str(k): v for k, v in inventory[COIN].items() if v > 0
+                        },
                     }
                 }
                 return response
@@ -144,7 +161,8 @@ class ATMService:
                 inventory_db = self.inventory_service.read_inventory()
                 inventory = self.inventory_from_bd(inventory_db)
                 total = sum(k * v for k, v in inventory[BILL].items()) + sum(
-                    k * v for k, v in inventory[COIN].items())
+                    k * v for k, v in inventory[COIN].items()
+                )
                 return {"total": total}
             except Exception as ex:
                 return "total failure", TOTAL_FAILURE_421
@@ -172,22 +190,32 @@ class ATMService:
                         else:
                             inventory.COIN[denomination] = quantity
                     self.inventory_service.write_inventory(inventory)
-                    print(f"Put {quantity} of {denomination} {item_type.lower()}. New state: {inventory}")
+                    print(
+                        f"Put {quantity} of {denomination} {item_type.lower()}. New state: {inventory}"
+                    )
                     return True
 
                 elif action == "retrieve":
                     if item_type == BILL:
-                        if denomination in inventory.BILL and inventory.BILL[denomination] >= quantity:
+                        if (
+                            denomination in inventory.BILL
+                            and inventory.BILL[denomination] >= quantity
+                        ):
                             inventory.BILL[denomination] -= quantity
                         else:
                             return False
                     elif item_type == COIN:
-                        if denomination in inventory.COIN and inventory.COIN[denomination] >= quantity:
+                        if (
+                            denomination in inventory.COIN
+                            and inventory.COIN[denomination] >= quantity
+                        ):
                             inventory.COIN[denomination] -= quantity
                         else:
                             return False
                     self.inventory_service.write_inventory(inventory)
-                    print(f"Retrieved {quantity} of {denomination} {item_type.lower()}. New state: {inventory}")
+                    print(
+                        f"Retrieved {quantity} of {denomination} {item_type.lower()}. New state: {inventory}"
+                    )
                     return True
 
                 return False
@@ -202,10 +230,7 @@ class ATMService:
     def _propose_withdrawal(self, inventory_db: Inventory, amount: float):
         inventory = self.inventory_from_bd(inventory_db)
 
-        proposed_withdrawal = {
-            BILL: {},
-            COIN: {}
-        }
+        proposed_withdrawal = {BILL: {}, COIN: {}}
         total_coins = 0
 
         for denomination_type in [BILL, COIN]:
@@ -213,8 +238,13 @@ class ATMService:
             for denomination in denominations:
                 if amount == 0:
                     break
-                num_notes = min(int((amount * DIVISION_MULTIPLIER) // (denomination * DIVISION_MULTIPLIER)),
-                                inventory[denomination_type][denomination])
+                num_notes = min(
+                    int(
+                        (amount * DIVISION_MULTIPLIER)
+                        // (denomination * DIVISION_MULTIPLIER)
+                    ),
+                    inventory[denomination_type][denomination],
+                )
                 if num_notes > 0:
                     if denomination_type == COIN:
                         total_coins += num_notes
@@ -246,8 +276,8 @@ class ATMService:
         inventory_db.BILL.clear()
         inventory_db.COIN.clear()
 
-        for k, v in inventory['BILL'].items():
+        for k, v in inventory["BILL"].items():
             inventory_db.BILL[k] = v
-        for k, v in inventory['COIN'].items():
+        for k, v in inventory["COIN"].items():
             inventory_db.COIN[k] = v
         return inventory_db

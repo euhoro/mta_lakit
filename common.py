@@ -18,13 +18,14 @@ C_001 = 0.01
 
 BILLS_AND_COINS_FULL = {
     BILL: {B_200: 7, B_100: 4, B_20: 15},
-    COIN: {C_10: 10, C_1: 10, C_5: 1, C_01: 12, C_001: 21}
+    COIN: {C_10: 10, C_1: 10, C_5: 1, C_01: 12, C_001: 21},
 }
 
 
 class Inventory(BaseModel):
     BILL: Dict[float, int] = Field(default_factory=dict)
     COIN: Dict[float, int] = Field(default_factory=dict)
+
 
 class InventoryService(ABC):
     @abstractmethod

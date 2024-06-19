@@ -7,7 +7,7 @@ class TestATM(unittest.TestCase):
     def setUp(self):
         self.base_url = "http://127.0.0.1:8000/atm"
 
-    #todo : re-do this
+    # todo : re-do this
     # def test_total_with_multithreaded_withdrawals(self):
     #     # Get initial total
     #     response = requests.get(f"{self.base_url}/total")
@@ -42,7 +42,6 @@ class TestATM(unittest.TestCase):
     #
     #     # Checks initial total equals the final total plus the money that was taken
     #     self.assertAlmostEqual(initial_total, final_total + total_withdrawn, places=2)
-
 
     # def test_total_with_multithreaded_withdrawals(self):
     #     # get total

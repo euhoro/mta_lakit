@@ -39,6 +39,7 @@ client = TestClient(app)
 #     final_total = response.json()["total"]
 #     assert round(initial_total, 2) == round(final_total + total_withdrawn, 2)
 
+
 def test_refill():
     refill_amount = {"0.1": 5, "5": 30, "20": 15, "100": 30}
     initial_inventory = client.get("/atm/inventory").json()
@@ -51,7 +52,10 @@ def test_refill():
 def test_withdraw_zero_amount():
     response = client.post("/atm/withdrawal", json={"amount": 3000})
     assert response.status_code == 422
-    assert response.json()["detail"] == "Amount exceeds the maximum withdrawal limit of 2000"
+    assert (
+        response.json()["detail"]
+        == "Amount exceeds the maximum withdrawal limit of 2000"
+    )
 
 
 def test_withdraw_negative_amount():

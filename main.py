@@ -53,7 +53,7 @@ def get_total():
 @app.get("/atm/maintenance")
 def maintenance():
     atm_service.restart()
-    return 'full'
+    return "full"
 
 
 if __name__ == "__main__":

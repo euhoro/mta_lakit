@@ -4,17 +4,17 @@ from common import Inventory, InventoryService
 
 
 class JSONFileInventoryService(InventoryService):
-    def __init__(self, file_path='inventory.json'):
+    def __init__(self, file_path="inventory.json"):
         self.file_path = file_path
         self.initial_inventory = Inventory(
             BILL={200.0: 7, 100.0: 4, 20.0: 15},
-            COIN={10.0: 10, 1.0: 10, 5.0: 1, 0.1: 12, 0.01: 21}
+            COIN={10.0: 10, 1.0: 10, 5.0: 1, 0.1: 12, 0.01: 21},
         )
         self.restart()
 
     def _read_file(self):
         try:
-            with open(self.file_path, 'r') as file:
+            with open(self.file_path, "r") as file:
                 return json.load(file)
         except FileNotFoundError:
             self.write_inventory(self.initial_inventory)
@@ -23,7 +23,7 @@ class JSONFileInventoryService(InventoryService):
             return self.initial_inventory.dict()
 
     def _write_file(self, data):
-        with open(self.file_path, 'w') as file:
+        with open(self.file_path, "w") as file:
             json.dump(data, file)
 
     def read_inventory(self) -> Inventory:
