@@ -116,6 +116,7 @@ This project is an asynchronous ATM service built with FastAPI. It handles ATM o
 ## TODOs
 
 - Create 2 modules app and core
+- Fix all pylint exceptions
 - Optimize Logic Structure
 - Achieve 95% Test Coverage
 - Split tests to short (text) and long (redis)
