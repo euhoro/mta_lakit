@@ -2,3 +2,6 @@ requests
 pytest
 pylint
 requests
+black
+coverage
+pytest-cov
