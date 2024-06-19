@@ -84,6 +84,10 @@ This project is an asynchronous ATM service built with FastAPI. It handles ATM o
 
 
 
+### Design 
+- [Design Documentation](https://github.com/euhoro/mta_lakit/blob/main/DESIGN.md)
+
+
 ### Testing
 
 #### Locally
