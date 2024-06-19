@@ -63,7 +63,7 @@ This project is an asynchronous ATM service built with FastAPI. It handles ATM o
 # alternative 1:
 
 # Run with Redis
-docker-compose up --build
+SETTINGS_MODE=redis docker-compose up --build
 
 3. Run to reload a full ATM`:
     ```bash
@@ -75,6 +75,11 @@ docker-compose up --build
    - [Home](http://127.0.0.1:8000)
 
 # alternative 2:
+
+# Run with Json file
+# Run with JSON file (for testing only - no real lock )
+SETTINGS_MODE=text docker-compose up --build
+
 
 ### Testing
 
@@ -100,9 +105,6 @@ docker-compose up --build
     pkill -f "uvicorn main:app"
     ```
 
-# Run with JSON file (for testing only - no real lock )
-SETTINGS_MODE=text docker-compose up --build
-
 
 ## TODOs
 
@@ -110,6 +112,7 @@ SETTINGS_MODE=text docker-compose up --build
 - Optimize Logic Structure
 - Achieve 95% Test Coverage
 - Split tests to short (text) and long (redis)
+- Integrate the stress test
 
 
 ## Contributing
