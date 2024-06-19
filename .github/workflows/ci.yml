@@ -61,7 +61,7 @@ jobs:
         SETTINGS_MODE=text pytest tests --cov=./ --cov-report=xml
     - name: Check coverage
       run: |
-        coverage report --fail-under=60
+        coverage report --fail-under=75
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v2
 #      with:
