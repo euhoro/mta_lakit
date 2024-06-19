@@ -5,3 +5,4 @@ requests
 black
 coverage
 pytest-cov
+coverage-badge
