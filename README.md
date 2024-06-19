@@ -63,22 +63,25 @@ This project is an asynchronous ATM service built with FastAPI. It handles ATM o
 # alternative 1:
 
 # Run with Redis
-SETTINGS_MODE=redis docker-compose up --build
 
-3. Run to reload a full ATM`:
+1. Run the app`:
+    ```bash
+   SETTINGS_MODE=redis docker-compose up --build
+   
+2. Run to reload a full ATM`:
     ```bash
    curl -L -g -X GET 'http://127.0.0.1:8000/atm/maintenance'
 
-
-2. Access the application:
+3. Access the application:
    - [API Documentation](http://127.0.0.1:8000/docs)
    - [Home](http://127.0.0.1:8000)
 
 # alternative 2:
-
-# Run with Json file
 # Run with JSON file (for testing only - no real lock )
-SETTINGS_MODE=text docker-compose up --build
+1. Run the app`:
+    ```bash
+   SETTINGS_MODE=text docker-compose up --build
+
 
 
 ### Testing
