@@ -22,7 +22,7 @@ jobs:
         pip install -r requirements_dev.txt
     - name: Lint with Pylint
       run: |
-        pylint app main.py redis_inventory_service.py json_inventory_service.py atm_service.py tests
+        pylint main.py atm_repository_redis.py atm_repository_json_file.py atm_service.py tests
     - name: Format with Black
       run: |
         black --check .

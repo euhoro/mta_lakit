@@ -1,7 +1,7 @@
 import os
 import time
 
-from atm_service_redis import RedisInventoryService
+from atm_repository_redis import RedisInventoryService
 from common import Inventory
 
 MAX_AMOUNT = 2000
@@ -28,7 +28,8 @@ ERR_TOO_MANY_COINS = "Too many coins"
 ERR_INSUFFICIENT_FUNDS = "Insufficient funds. Max available amount:"
 
 SETTINGS_MODE = os.getenv("SETTINGS_MODE", "redis")
-REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")  # Default to 127.0.0.1 for local development
+REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
+# Default to 127.0.0.1 for local development
 
 
 def get_db_service():
@@ -38,7 +39,7 @@ def get_db_service():
         inventory_service = RedisInventoryService(
             redis.StrictRedis(host=REDIS_HOST, port=6379, db=0))
     else:
-        from atm_service_json_file import JSONFileInventoryService
+        from atm_repository_json_file import JSONFileInventoryService
         inventory_service = JSONFileInventoryService()
 
     return inventory_service

@@ -1,7 +1,4 @@
-import fcntl
 import json
-import os
-import time
 
 from common import Inventory, InventoryService
 
